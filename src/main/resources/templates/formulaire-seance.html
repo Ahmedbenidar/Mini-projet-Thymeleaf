@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: entete('Séance')}"></head>
+<body>
+<header th:replace="~{fragments :: entetePage}"></header>
+
+<main class="contenu contenu-etroit">
+    <div th:replace="~{fragments :: messages}"></div>
+
+    <section class="entete-section">
+        <div>
+            <h1 th:text="${modeEdition} ? 'Modifier une séance' : 'Planifier une séance'">Planifier une séance</h1>
+            <p class="sous-titre">La salle ne peut pas accueillir deux séances qui se chevauchent.</p>
+        </div>
+        <a class="lien-secondaire" th:href="@{/seances}">Retour au planning</a>
+    </section>
+
+    <p class="message message-erreur" th:if="${erreurMetier}" th:text="${erreurMetier}">Erreur métier.</p>
+
+    <form class="formulaire"
+          method="post"
+          novalidate
+          th:object="${seance}"
+          th:action="${modeEdition} ? @{/seances/{id}/modifier(id=${seance.id})} : @{/seances/nouvelle}">
+
+        <div class="champ">
+            <label for="film">Film</label>
+            <select id="film" th:field="*{film}">
+                <option value="">— choisir un film —</option>
+                <option th:each="f : ${tousLesFilms}"
+                        th:value="${f.id}"
+                        th:text="|${f.titre} (${f.dureeFormatee})|">Film</option>
+            </select>
+            <p class="erreur-champ" th:if="${#fields.hasErrors('film')}" th:errors="*{film}">Erreur</p>
+        </div>
+
+        <div class="champ">
+            <label for="dateHeure">Date et heure</label>
+            <input type="datetime-local" id="dateHeure" th:field="*{dateHeure}">
+            <p class="erreur-champ" th:if="${#fields.hasErrors('dateHeure')}" th:errors="*{dateHeure}">Erreur</p>
+        </div>
+
+        <div class="champ">
+            <label for="salle">Salle</label>
+            <input type="text" id="salle" th:field="*{salle}" placeholder="SALLE ATLAS">
+            <p class="erreur-champ" th:if="${#fields.hasErrors('salle')}" th:errors="*{salle}">Erreur</p>
+        </div>
+
+        <div class="champ">
+            <label for="version">Version</label>
+            <select id="version" th:field="*{version}">
+                <option value="VF">VF — version française</option>
+                <option value="VOSTFR">VOSTFR — sous-titrée</option>
+                <option value="VO">VO — version originale</option>
+            </select>
+            <p class="erreur-champ" th:if="${#fields.hasErrors('version')}" th:errors="*{version}">Erreur</p>
+        </div>
+
+        <div class="champ">
+            <label for="capacite">Capacité de la salle</label>
+            <input type="number" id="capacite" th:field="*{capacite}" min="20" max="400" placeholder="120">
+            <p class="erreur-champ" th:if="${#fields.hasErrors('capacite')}" th:errors="*{capacite}">Erreur</p>
+        </div>
+
+        <div class="actions-formulaire">
+            <button type="submit" class="bouton bouton-principal"
+                    th:text="${modeEdition} ? 'Enregistrer les modifications' : 'Planifier la séance'">
+                Planifier la séance
+            </button>
+            <a class="lien-secondaire" th:href="@{/seances}">Annuler</a>
+        </div>
+    </form>
+</main>
+
+<footer th:replace="~{fragments :: pied}"></footer>
+</body>
+</html>

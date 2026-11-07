@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: entete('Statistiques')}"></head>
+<body>
+<header th:replace="~{fragments :: entetePage}"></header>
+
+<main class="contenu">
+    <div th:replace="~{fragments :: messages}"></div>
+
+    <section class="entete-section">
+        <div>
+            <h1>Statistiques d'exploitation</h1>
+            <p class="sous-titre">Taux de remplissage par séance, recettes par film et évolution des ventes.</p>
+        </div>
+        <span class="recette-filtre" th:text="|Recette nette : ${#numbers.formatDecimal(chiffreAffaires, 1, 2)} MAD|">0 MAD</span>
+    </section>
+
+    <section class="bloc">
+        <h2>Taux de remplissage par séance</h2>
+        <p class="vide" th:if="${#lists.isEmpty(seances)}">Aucune séance enregistrée.</p>
+        <table class="tableau" th:unless="${#lists.isEmpty(seances)}">
+            <thead>
+            <tr>
+                <th>Séance</th>
+                <th>Film</th>
+                <th>Salle</th>
+                <th>Billets vendus</th>
+                <th>Taux de remplissage</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="seance, iteration : ${seances}">
+                <td th:text="${#temporals.format(seance.dateHeure, 'dd/MM/yyyy HH:mm')}">01/01/2025 20:00</td>
+                <td th:text="${seance.film.titre}">Film</td>
+                <td th:text="${seance.salle}">SALLE</td>
+                <td th:text="|${placesVendues[iteration.index]} / ${seance.capacite}|">0 / 0</td>
+                <td>
+                    <div class="jauge">
+                        <div class="jauge-barre" th:style="|width: ${remplissage[iteration.index]}%|"></div>
+                    </div>
+                    <span class="sous-texte" th:text="|${remplissage[iteration.index]} %|">0 %</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div class="deux-colonnes">
+        <section class="bloc">
+            <h2>Recettes par film</h2>
+            <p class="vide" th:if="${#lists.isEmpty(recettesParFilm)}">Aucune vente enregistrée.</p>
+            <ul class="liste-classement" th:unless="${#lists.isEmpty(recettesParFilm)}">
+                <li th:each="ligne : ${recettesParFilm}">
+                    <span class="rang-titre" th:text="${ligne[0]}">Film</span>
+                    <span class="rang-detail"
+                          th:text="|${ligne[1]} billet(s) · ${#numbers.formatDecimal(ligne[2], 1, 2)} MAD|">0</span>
+                </li>
+            </ul>
+        </section>
+
+        <section class="bloc">
+            <h2>Ventes par mois</h2>
+            <p class="vide" th:if="${#lists.isEmpty(ventesParMois)}">Aucune vente enregistrée.</p>
+            <ul class="liste-classement" th:unless="${#lists.isEmpty(ventesParMois)}">
+                <li th:each="ligne : ${ventesParMois}">
+                    <span class="rang-titre" th:text="${ligne[0]}">2025-01</span>
+                    <span class="rang-detail"
+                          th:text="|${ligne[1]} billet(s) · ${#numbers.formatDecimal(ligne[2], 1, 2)} MAD|">0</span>
+                </li>
+            </ul>
+        </section>
+    </div>
+
+    <section class="bloc">
+        <h2>Répartition du catalogue par genre</h2>
+        <p class="vide" th:if="${#lists.isEmpty(repartitionGenres)}">Catalogue vide.</p>
+        <ul class="liste-classement" th:unless="${#lists.isEmpty(repartitionGenres)}">
+            <li th:each="ligne : ${repartitionGenres}">
+                <span class="rang-titre" th:text="${ligne[0].libelle}">Genre</span>
+                <span class="rang-detail" th:text="|${ligne[1]} film(s)|">0</span>
+            </li>
+        </ul>
+    </section>
+</main>
+
+<footer th:replace="~{fragments :: pied}"></footer>
+</body>
+</html>

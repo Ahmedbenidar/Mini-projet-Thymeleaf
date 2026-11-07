@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="entete(titre)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="|CinéAtlas USMBA — ${titre}|">CinéAtlas USMBA</title>
+    <link rel="stylesheet" th:href="@{/css/cine-atlas.css}">
+</head>
+<body>
+
+<header th:fragment="entetePage" class="bandeau">
+    <div class="bandeau-titre">
+        <span class="logo">CinéAtlas</span>
+        <span class="sous-logo">USMBA — programmation des séances</span>
+    </div>
+    <nav class="navigation">
+        <a th:href="@{/}" th:classappend="${pageActive == 'tableau-de-bord'} ? 'actif'">Tableau de bord</a>
+        <a th:href="@{/films}" th:classappend="${pageActive == 'films'} ? 'actif'">Films</a>
+        <a th:href="@{/seances}" th:classappend="${pageActive == 'seances'} ? 'actif'">Séances</a>
+        <a th:href="@{/billets}" th:classappend="${pageActive == 'billets'} ? 'actif'">Billets</a>
+        <a th:href="@{/statistiques}" th:classappend="${pageActive == 'statistiques'} ? 'actif'">Statistiques</a>
+    </nav>
+</header>
+
+<div th:fragment="messages" class="zone-messages">
+    <p class="message message-succes" th:if="${succes}" th:text="${succes}">Opération réussie.</p>
+    <p class="message message-erreur" th:if="${erreur}" th:text="${erreur}">Une erreur est survenue.</p>
+</div>
+
+<footer th:fragment="pied" class="pied">
+    <p>CinéAtlas USMBA — mini-projet Thymeleaf · Faculté des Sciences et Techniques</p>
+    <p class="pied-detail">Données de démonstration, aucune réservation réelle n'est effectuée.</p>
+    <script th:src="@{/js/cine-atlas.js}"></script>
+</footer>
+
+</body>
+</html>

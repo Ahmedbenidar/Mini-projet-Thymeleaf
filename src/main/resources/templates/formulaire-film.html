@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: entete('Film')}"></head>
+<body>
+<header th:replace="~{fragments :: entetePage}"></header>
+
+<main class="contenu contenu-etroit">
+    <div th:replace="~{fragments :: messages}"></div>
+
+    <section class="entete-section">
+        <div>
+            <h1 th:text="${modeEdition} ? 'Modifier un film' : 'Nouveau film'">Nouveau film</h1>
+            <p class="sous-titre">Les cinq champs de la fiche sont contrôlés côté serveur.</p>
+        </div>
+        <a class="lien-secondaire" th:href="@{/films}">Retour au catalogue</a>
+    </section>
+
+    <p class="message message-erreur" th:if="${erreurMetier}" th:text="${erreurMetier}">Erreur métier.</p>
+
+    <form class="formulaire"
+          method="post"
+          novalidate
+          th:object="${film}"
+          th:action="${modeEdition} ? @{/films/{id}/modifier(id=${film.id})} : @{/films/nouveau}">
+
+        <div class="champ">
+            <label for="titre">Titre</label>
+            <input type="text" id="titre" th:field="*{titre}" placeholder="Titre du film">
+            <p class="erreur-champ" th:if="${#fields.hasErrors('titre')}" th:errors="*{titre}">Erreur</p>
+        </div>
+
+        <div class="champ">
+            <label for="genre">Genre</label>
+            <select id="genre" th:field="*{genre}">
+                <option value="">— choisir un genre —</option>
+                <option th:each="g : ${genres}" th:value="${g}" th:text="${g.libelle}">Action</option>
+            </select>
+            <p class="erreur-champ" th:if="${#fields.hasErrors('genre')}" th:errors="*{genre}">Erreur</p>
+        </div>
+
+        <div class="champ">
+            <label for="dureeMin">Durée (minutes)</label>
+            <input type="number" id="dureeMin" th:field="*{dureeMin}" min="20" max="300" placeholder="120">
+            <p class="erreur-champ" th:if="${#fields.hasErrors('dureeMin')}" th:errors="*{dureeMin}">Erreur</p>
+        </div>
+
+        <div class="champ">
+            <label for="realisateur">Réalisateur</label>
+            <input type="text" id="realisateur" th:field="*{realisateur}" placeholder="Nom du réalisateur">
+            <p class="erreur-champ" th:if="${#fields.hasErrors('realisateur')}" th:errors="*{realisateur}">Erreur</p>
+        </div>
+
+        <div class="champ">
+            <label for="anneeSortie">Année de sortie</label>
+            <input type="number" id="anneeSortie" th:field="*{anneeSortie}" min="1900" max="2100" placeholder="2024">
+            <p class="erreur-champ" th:if="${#fields.hasErrors('anneeSortie')}" th:errors="*{anneeSortie}">Erreur</p>
+        </div>
+
+        <div class="actions-formulaire">
+            <button type="submit" class="bouton bouton-principal"
+                    th:text="${modeEdition} ? 'Enregistrer les modifications' : 'Ajouter au catalogue'">
+                Ajouter au catalogue
+            </button>
+            <a class="lien-secondaire" th:href="@{/films}">Annuler</a>
+        </div>
+    </form>
+</main>
+
+<footer th:replace="~{fragments :: pied}"></footer>
+</body>
+</html>
