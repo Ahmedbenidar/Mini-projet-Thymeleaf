@@ -1,15 +1,6 @@
 # CinéAtlas USMBA — Mini-projet Thymeleaf (sujet n° 13 : Cinéma)
 
-Application web de gestion d'une programmation cinématographique, réalisée avec **Spring Boot 3.3.5**,
-**Thymeleaf**, **Spring Data JPA** et **MariaDB**. Elle couvre les trois entités demandées par le
-sujet — `Film`, `Seance`, `Billet` — avec leurs relations `@ManyToOne`, les opérations CRUD complètes,
-les filtres et les statistiques d'exploitation.
 
-Le projet est volontairement autonome : identité visuelle propre (thème sombre « salle obscure »),
-URL et libellés entièrement en français, couche service séparée de la couche web, et plusieurs règles
-métier ajoutées au-delà de l'énoncé.
-
----
 
 ## Ce que fait l'application
 
@@ -179,47 +170,3 @@ Trois blocs : taux de remplissage par séance avec jauges, classement des recett
 
 ---
 
-## Choix d'implémentation
-
-- **Couche service systématique** : le contrôleur ne fait que du binding et de la redirection ; toutes
-  les règles métier vivent dans `FilmService`, `SeanceService` et `BilletService`, qui lèvent une
-  `ExceptionMetier` transformée en message flash.
-- **Aucun Bootstrap** : `cine-atlas.css` définit l'identité visuelle complète (palette sombre, halos
-  ambres, jauges en dégradé) pour éviter la ressemblance avec les rendus génériques.
-- **`open-in-view=false`** : les associations `@ManyToOne` sont en `FetchType.EAGER` et les compteurs
-  proviennent de requêtes de dépôt, ce qui supprime tout risque de `LazyInitializationException`.
-- **Requêtes d'agrégation** : `BilletDepot` contient les `@Query` de statistiques
-  (`recettesParFilm`, `ventesParMois` avec `date_format`, `chiffreAffairesTotal`).
-- **Messages d'erreur en français** avec apostrophes typographiques (`’`) — indispensable car
-  `MessageFormat` consomme l'apostrophe droite et afficherait `Lannée` au lieu de `L'année`.
-- **Confirmation de suppression** sans JavaScript inline : un écouteur unique sur
-  `form[data-confirmation]` (Thymeleaf 3.1 interdit les expressions dans les attributs d'événement).
-
-## Personnalisation par rapport à l'énoncé
-
-- Le domaine est transposé dans un contexte marocain : salles ATLAS / OUARZAZATE / TETOUAN, films aux
-  titres originaux, noms d'acheteurs et numéros de téléphone locaux.
-- Le sujet demande un CRUD ; j'ai ajouté **cinq règles métier** non demandées : anti-chevauchement de
-  salle, refus des séances passées, capacité minimale liée aux ventes, interdiction d'annuler un billet
-  déjà utilisé, et refus de vente sur une séance complète.
-- Le sujet demande deux statistiques ; la page en propose **cinq** (remplissage, recettes par film,
-  ventes par mois, répartition par genre, recette nette globale).
-- Le code est en français (package `ma.usmba.cinema`, classes `FilmDepot`, `SeanceService`,
-  `ProgrammationControleur`…) plutôt qu'en anglais générique.
-
-## Structure du projet
-
-```
-src/main/java/ma/usmba/cinema/
-├── CineAtlasApplication.java
-├── modele/          Film, Seance, Billet, GenreFilm, StatutBillet
-├── depot/           FilmDepot, SeanceDepot, BilletDepot
-├── service/         FilmService, SeanceService, BilletService, ExceptionMetier
-├── controleur/      ProgrammationControleur
-└── configuration/   JeuDeDonnees, ConvertisseurFilm, ConvertisseurSeance
-
-src/main/resources/
-├── application.properties
-├── templates/       9 gabarits Thymeleaf (fragments partagés inclus)
-└── static/          css/cine-atlas.css, js/cine-atlas.js
-```
